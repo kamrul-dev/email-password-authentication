@@ -9,7 +9,7 @@ const auth = getAuth(app);
 function App() {
   return (
     <div className="App">
-      
+     
     </div>
   );
 }
