@@ -1,6 +1,6 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
-import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword, getAuth, sendEmailVerification, sendPasswordResetEmail, signInWithEmailAndPassword } from 'firebase/auth';
 import app from './firebase.init';
 import { Button, Form } from 'react-bootstrap';
 import { useState } from 'react';
@@ -45,14 +45,14 @@ function App() {
 
       if (registered) {
         signInWithEmailAndPassword(auth, email, password)
-        .then(result => {
-          const user = result.user;
-          console.log(user);
-        })
-        .catch(error => {
-          console.error(error);
-          setError(error.message);
-        })
+          .then(result => {
+            const user = result.user;
+            console.log(user);
+          })
+          .catch(error => {
+            console.error(error);
+            setError(error.message);
+          })
       }
       else {
         createUserWithEmailAndPassword(auth, email, password)
@@ -61,6 +61,7 @@ function App() {
             console.log(user);
             setEmail('');
             setPassword('');
+            verifyEmail();
           })
           .catch(error => {
             setError(error.message);
@@ -70,6 +71,20 @@ function App() {
     }
 
     event.preventDefault();
+  }
+
+  const handlePasswordReset = () => {
+    sendPasswordResetEmail(auth, email)
+    .then(() => {
+      console.log('Email Sent');
+    })
+  }
+
+  const verifyEmail = () => {
+    sendEmailVerification(auth.currentUser)
+      .then(() => {
+        console.log('Email Verification sent');
+      })
   }
 
   return (
@@ -96,6 +111,8 @@ function App() {
             <Form.Check onChange={handleRegisteredchange} type="checkbox" autoComplete="on" label="Already Registered?" />
           </Form.Group>
           <p className='text-danger'>{error}</p>
+          <Button onClick={handlePasswordReset} variant="link">Forget Passoword?</Button>
+          <br />
           <Button variant="info" type="submit">
             {registered ? 'Login' : 'Register'}
           </Button>
