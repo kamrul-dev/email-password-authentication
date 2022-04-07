@@ -1,6 +1,6 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
-import { createUserWithEmailAndPassword, getAuth, sendEmailVerification, sendPasswordResetEmail, signInWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword, getAuth, sendEmailVerification, sendPasswordResetEmail, signInWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import app from './firebase.init';
 import { Button, Form } from 'react-bootstrap';
 import { useState } from 'react';
@@ -12,8 +12,13 @@ function App() {
   const [validated, setValidated] = useState(false);
   const [registered, setRegistered] = useState(false);
   const [error, setError] = useState('');
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
+  const handlNameBlur = event => {
+    setName(event.target.value);
+  }
 
   const handleEmailBlur = event => {
     setEmail(event.target.value);
@@ -62,6 +67,7 @@ function App() {
             setEmail('');
             setPassword('');
             verifyEmail();
+            setUserName();
           })
           .catch(error => {
             setError(error.message);
@@ -75,9 +81,22 @@ function App() {
 
   const handlePasswordReset = () => {
     sendPasswordResetEmail(auth, email)
-    .then(() => {
-      console.log('Email Sent');
+      .then(() => {
+        console.log('Email Sent');
+      })
+  }
+
+  const setUserName = () => {
+    updateProfile(auth.currentUser, {
+      displayName: name
     })
+    .then(() => {
+      console.log('updating name');
+    })
+    .catch(error => {
+      setError(error.message);
+    })
+    
   }
 
   const verifyEmail = () => {
@@ -92,6 +111,14 @@ function App() {
       <div className="registration w-50 mx-auto mt-5">
         <h2 className='text-info'> Please {registered ? 'Login' : 'Register Yourself!'}!</h2>
         <Form noValidate validated={validated} onSubmit={handleFormSubmit}>
+          {!registered && <Form.Group className="mb-3" controlId="formBasicName">
+            <Form.Label>Your Name</Form.Label>
+            <Form.Control onBlur={handlNameBlur} type="text" placeholder="Your name" required />
+            <Form.Control.Feedback type="invalid">
+              Please provide your name!
+            </Form.Control.Feedback>
+          </Form.Group>}
+
           <Form.Group className="mb-3" controlId="formBasicEmail">
             <Form.Label>Email address</Form.Label>
             <Form.Control onBlur={handleEmailBlur} type="email" placeholder="Enter email" required />
