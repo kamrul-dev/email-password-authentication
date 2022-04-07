@@ -10,6 +10,7 @@ const auth = getAuth(app);
 
 function App() {
   const [validated, setValidated] = useState(false);
+  const [error, setError] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -22,16 +23,20 @@ function App() {
   }
 
   const handleFormSubmit = event => {
-
+    event.preventDefault();
     const form = event.currentTarget;
     if (form.checkValidity() === false) {
-      event.preventDefault();
       event.stopPropagation();
       // return;
     }
-
     setValidated(true);
+
     if (form.checkValidity() === true) {
+      if (!/(?=.*?[#?!@$%^&*-])/.test(password)) {
+        setError('password should contain at least one special character');
+        return;
+      }
+      setError('');
       createUserWithEmailAndPassword(auth, email, password)
         .then(result => {
           const user = result.user;
@@ -41,8 +46,6 @@ function App() {
           console.error(error);
         })
     }
-
-
     event.preventDefault();
   }
 
@@ -66,6 +69,7 @@ function App() {
               Please provide a valid password !
             </Form.Control.Feedback>
           </Form.Group>
+          <p className='text-danger'>{error}</p>
           <Button variant="info" type="submit">
             Submit
           </Button>
