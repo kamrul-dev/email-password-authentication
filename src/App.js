@@ -87,13 +87,13 @@ function App() {
 
           <Form.Group className="mb-3" controlId="formBasicPassword">
             <Form.Label>Password</Form.Label>
-            <Form.Control onBlur={handlePasswordBlur} type="password" placeholder="Password" required />
+            <Form.Control onBlur={handlePasswordBlur} type="password" autoComplete="on" placeholder="Password" required />
             <Form.Control.Feedback type="invalid">
               Please provide a valid password !
             </Form.Control.Feedback>
           </Form.Group>
           <Form.Group className="mb-3" controlId="formBasicCheckbox">
-            <Form.Check onChange={handleRegisteredchange} type="checkbox" label="Already Registered?" />
+            <Form.Check onChange={handleRegisteredchange} type="checkbox" autoComplete="on" label="Already Registered?" />
           </Form.Group>
           <p className='text-danger'>{error}</p>
           <Button variant="info" type="submit">
